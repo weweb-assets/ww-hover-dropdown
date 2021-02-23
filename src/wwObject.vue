@@ -1,7 +1,13 @@
 <template>
     <div class="dropdown" ref="dropdownElement" :style="cssVariables" @click.stop>
-        <div class="dropdown-default" @mouseenter="showDropdown" @mouseleave="hideDropdown" v-show="!isMenuDisplayed">
-            <wwLayout class="dropdown__layout" path="dropdown"></wwLayout>
+        <div class="dropdown-default" @mouseenter="showDropdown" @mouseleave="hideDropdown" v-if="!isMenuDisplayed">
+            <wwLayout class="dropdown__layout" path="dropdown">
+                <template v-slot="{ item }">
+                    <wwLayoutItem>
+                        <wwObject v-bind="item" :states="states"></wwObject>
+                    </wwLayoutItem>
+                </template>
+            </wwLayout>
 
             <div class="dropdown__content">
                 <transition name="fade" mode="out-in">
@@ -20,8 +26,14 @@
                 </transition>
             </div>
         </div>
-        <div class="dropdown-mobile" @click="toggleView" v-show="isMenuDisplayed">
-            <wwLayout class="dropdown__layout--mobile" path="dropdown"></wwLayout>
+        <div class="dropdown-mobile" @click="toggleView" v-else>
+            <wwLayout class="dropdown__layout--mobile" path="dropdown">
+                <template v-slot="{ item }">
+                    <wwLayoutItem>
+                        <wwObject v-bind="item" :states="states"></wwObject>
+                    </wwLayoutItem>
+                </template>
+            </wwLayout>
 
             <div class="dropdown__content--mobile">
                 <wwExpandTransition>
@@ -67,7 +79,7 @@ export default {
             isMobileVisible: false,
             isContentEdit: false,
             topPosition: 0,
-            // states: [],
+            states: [],
         };
     },
     watch: {
@@ -101,13 +113,16 @@ export default {
         showDropdown() {
             this.updatePosition();
             this.isVisible = true;
+            this.states = ['active'];
             // this.startAnim();
         },
         hideDropdown() {
             this.isVisible = false;
+            this.states = [];
             // this.removeAnim();
         },
         toggleView() {
+            this.states = this.states[0] === 'active' ? [] : ['active'];
             this.isMobileVisible = !this.isMobileVisible;
         },
         toggleEdit() {
