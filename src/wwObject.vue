@@ -111,8 +111,8 @@ export default {
         },
         toggleEdit() {
             this.isContentEdit = !this.isContentEdit;
-            if (this.isContentEdit) this.startAnim();
-            else this.removeAnim();
+            // if (this.isContentEdit) this.startAnim();
+            // else this.removeAnim();
         },
         // startAnim() {
         //     this.$nextTick(() => {
