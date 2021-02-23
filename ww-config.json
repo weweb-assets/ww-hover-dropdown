@@ -5,10 +5,30 @@
     },
     "editor": {
         "label": {
-            "en": "My element"
+            "en": "Hover dropdown"
         },
         "menuOptions": {},
         "styleOptions": {},
-        "settingsOptions": {}
+        "settingsOptions": {
+            "menuBreakpoint": {
+                "label": { "en": "Mobile view starting at" },
+                "type": "TextRadioGroup",
+                "options": {
+                    "choices": [
+                        { "value": "laptop", "title": { "en": "Laptop" }, "icon": "laptop" },
+                        { "value": "tablet", "title": { "en": "Tablet" }, "icon": "tablet" },
+                        { "value": "mobile", "title": { "en": "Mobile" }, "icon": "mobile" }
+                    ]
+                }
+            },
+            "toggleEdit": {
+                "type": "Button",
+                "options": {
+                    "text": { "en": "Toggle edition", "fr": "Toggle edition" },
+                    "color": "blue",
+                    "action": "toggleEdit"
+                }
+            }
+        }
     }
 }
