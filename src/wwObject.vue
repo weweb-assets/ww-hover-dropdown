@@ -1,6 +1,6 @@
 <template>
     <div class="dropdown" ref="dropdownElement" :style="cssVariables" @click.stop>
-        <div class="dropdown-default" @mouseenter="showDropdown" @mouseleave="hideDropdown" v-if="!isMenuDisplayed">
+        <div class="dropdown-default" @mouseenter="showDropdown" @mouseleave="hideDropdown" v-show="!isMenuDisplayed">
             <wwLayout class="dropdown__layout" path="dropdown"></wwLayout>
 
             <div class="dropdown__content">
@@ -20,7 +20,7 @@
                 </transition>
             </div>
         </div>
-        <div class="dropdown-mobile" @click="toggleView" v-if="isMenuDisplayed">
+        <div class="dropdown-mobile" @click="toggleView" v-show="isMenuDisplayed">
             <wwLayout class="dropdown__layout--mobile" path="dropdown"></wwLayout>
 
             <div class="dropdown__content--mobile">
