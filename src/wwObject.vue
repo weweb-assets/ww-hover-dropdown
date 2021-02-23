@@ -23,7 +23,7 @@
         <div class="dropdown-mobile" @click="toggleView" v-if="isMenuDisplayed">
             <wwLayout class="dropdown__layout--mobile" path="dropdown"></wwLayout>
 
-            <!-- <div class="dropdown__content--mobile">
+            <div class="dropdown__content--mobile">
                 <wwExpandTransition>
                     <wwLayout
                         class="layout"
@@ -38,16 +38,16 @@
                         </template>
                     </wwLayout>
                 </wwExpandTransition>
-            </div> -->
+            </div>
         </div>
     </div>
 </template>
 
 <script>
-// import wwExpandTransition from './wwExpandTransition.vue';
+import wwExpandTransition from './wwExpandTransition.vue';
 
 export default {
-    // components: { wwExpandTransition },
+    components: { wwExpandTransition },
     props: {
         content: Object,
         wwFrontState: Object,
