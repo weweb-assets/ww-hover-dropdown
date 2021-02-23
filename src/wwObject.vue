@@ -73,7 +73,7 @@ export default {
     watch: {
         isEditing() {
             if (!this.isEditing) this.isContentEdit = false;
-            this.topPosition = this.dropdown.getBoundingClientRect().top + this.dropdown.offsetHeight;
+            this.updatePosition();
         },
     },
     computed: {
@@ -124,6 +124,7 @@ export default {
         //     this.states = [];
         // },
         updatePosition() {
+            if (!this.dropdown && !this.dropdown.getBoundingClientRect && !this.dropdown.offsetHeight) return;
             this.topPosition = this.dropdown.getBoundingClientRect().top + this.dropdown.offsetHeight;
         },
     },
