@@ -1,11 +1,5 @@
 <template>
-    <div
-        class="dropdown"
-        :class="{ editContentSize: editContentSize }"
-        ref="dropdownElement"
-        :style="cssVariables"
-        @click.stop
-    >
+    <div class="dropdown" ref="dropdownElement" :style="cssVariables" @click.stop>
         <div class="dropdown-default" @mouseenter="showDropdown" @mouseleave="hideDropdown" v-if="!isMenuDisplayed">
             <wwLayout class="dropdown__layout" path="dropdown">
                 <template v-slot="{ item }">
@@ -77,11 +71,10 @@ export default {
         dropdown: [],
         dropdownContent: [],
         menuBreakpoint: 'mobile',
-        contentWidth: 80,
+        contentWidth: '80vw',
     },
     data() {
         return {
-            editContentSize: false,
             dropdown: null,
             isVisible: false,
             isMobileVisible: false,
@@ -94,13 +87,6 @@ export default {
         isEditing() {
             if (!this.isEditing) this.isContentEdit = false;
             this.updatePosition();
-        },
-        'content.contentWidth'() {
-            if (!this.isEditing) return;
-            this.editContentSize = true;
-            setTimeout(() => {
-                this.editContentSize = false;
-            }, 100);
         },
     },
     computed: {
@@ -119,9 +105,7 @@ export default {
         },
         cssVariables() {
             return {
-                '--content-width': this.isEditing
-                    ? `${this.content.contentWidth - 1}vw`
-                    : `${this.content.contentWidth}vw`,
+                '--content-width': this.content.contentWidth,
                 '--top-position': this.topPosition + 'px',
             };
         },
@@ -160,10 +144,6 @@ export default {
     --content-width: 80vw;
     --top-position: 0px;
 
-    &.editContentSize {
-        border: 1px dashed rgb(148, 148, 148);
-    }
-
     &__layout {
         display: flex;
         flex-direction: column;
@@ -175,14 +155,19 @@ export default {
         z-index: 9;
         position: fixed;
         top: var(--top-position);
-        left: 0;
+        left: 50%;
+        transform: translateX(-50%);
         width: var(--content-width);
-        margin-left: 10vw;
+        margin-left: var(--content-width) / 10;
         margin-top: -1px;
         display: flex;
         flex-direction: row;
         justify-content: center;
         align-content: center;
+
+        &.isEditing {
+            border: 1px solid red;
+        }
 
         .layout {
             display: flex;
