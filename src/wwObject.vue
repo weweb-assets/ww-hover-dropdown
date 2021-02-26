@@ -1,5 +1,11 @@
 <template>
-    <div class="dropdown" ref="dropdownElement" :style="cssVariables" @click.stop>
+    <div
+        class="dropdown"
+        :class="{ editContentSize: editContentSize }"
+        ref="dropdownElement"
+        :style="cssVariables"
+        @click.stop
+    >
         <div class="dropdown-default" @mouseenter="showDropdown" @mouseleave="hideDropdown" v-if="!isMenuDisplayed">
             <wwLayout class="dropdown__layout" path="dropdown">
                 <template v-slot="{ item }">
@@ -71,9 +77,11 @@ export default {
         dropdown: [],
         dropdownContent: [],
         menuBreakpoint: 'mobile',
+        contentWidth: 80,
     },
     data() {
         return {
+            editContentSize: false,
             dropdown: null,
             isVisible: false,
             isMobileVisible: false,
@@ -86,6 +94,13 @@ export default {
         isEditing() {
             if (!this.isEditing) this.isContentEdit = false;
             this.updatePosition();
+        },
+        'content.contentWidth'() {
+            if (!this.isEditing) return;
+            this.editContentSize = true;
+            setTimeout(() => {
+                this.editContentSize = false;
+            }, 100);
         },
     },
     computed: {
@@ -104,7 +119,9 @@ export default {
         },
         cssVariables() {
             return {
-                '--content-width': this.isEditing ? `${79}vw` : `${80}vw`,
+                '--content-width': this.isEditing
+                    ? `${this.content.contentWidth - 1}vw`
+                    : `${this.content.contentWidth}vw`,
                 '--top-position': this.topPosition + 'px',
             };
         },
@@ -114,12 +131,10 @@ export default {
             this.updatePosition();
             this.isVisible = true;
             this.states = ['active'];
-            // this.startAnim();
         },
         hideDropdown() {
             this.isVisible = false;
             this.states = [];
-            // this.removeAnim();
         },
         toggleView() {
             this.states = this.states[0] === 'active' ? [] : ['active'];
@@ -127,17 +142,7 @@ export default {
         },
         toggleEdit() {
             this.isContentEdit = !this.isContentEdit;
-            // if (this.isContentEdit) this.startAnim();
-            // else this.removeAnim();
         },
-        // startAnim() {
-        //     this.$nextTick(() => {
-        //         this.states = ['anim'];
-        //     });
-        // },
-        // removeAnim() {
-        //     this.states = [];
-        // },
         updatePosition() {
             if (!this.dropdown && !this.dropdown.getBoundingClientRect && !this.dropdown.offsetHeight) return;
             this.topPosition = this.dropdown.getBoundingClientRect().top + this.dropdown.offsetHeight;
@@ -154,6 +159,10 @@ export default {
 .dropdown {
     --content-width: 80vw;
     --top-position: 0px;
+
+    &.editContentSize {
+        border: 1px dashed rgb(148, 148, 148);
+    }
 
     &__layout {
         display: flex;
