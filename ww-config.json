@@ -9,18 +9,34 @@
         },
         "menuOptions": {},
         "styleOptions": {
-            "contentWidth": {
-                "type": "Length",
+            "position": {
                 "label": {
-                    "en": "Hover container size",
-                    "fr": "Hover container size"
+                    "en": "Position",
+                    "fr": "Position"
                 },
+                "type": "TextSelect",
                 "options": {
-                    "unitChoices": [{ "value": "vw", "label": "vw", "min": 30, "max": 100 }]
+                    "options": [
+                        { "value": "center", "label": { "en": "Center of the screen", "fr": "Center of the screen" } },
+                        { "value": "under", "label": { "en": "Under the dropdown" } }
+                    ]
                 }
             }
         },
         "settingsOptions": {
+            "trigger": {
+                "label": {
+                    "en": "Show on",
+                    "fr": "Show on"
+                },
+                "type": "TextSelect",
+                "options": {
+                    "options": [
+                        { "value": "mouseenter", "label": { "en": "Hover", "fr": "Hover" } },
+                        { "value": "click", "label": { "en": "Click" } }
+                    ]
+                }
+            },
             "menuBreakpoint": {
                 "label": { "en": "Mobile view starting at" },
                 "type": "TextRadioGroup",

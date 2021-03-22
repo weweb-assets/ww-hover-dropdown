@@ -1,32 +1,35 @@
 <template>
-    <div class="dropdown" ref="dropdownElement" :style="cssVariables" @click.stop>
-        <div class="dropdown-default" @mouseenter="showDropdown" @mouseleave="hideDropdown" v-if="!isMenuDisplayed">
-            <wwLayout class="dropdown__layout" path="dropdown">
-                <template v-slot="{ item }">
-                    <wwLayoutItem>
-                        <wwObject v-bind="item" :states="states"></wwObject>
-                    </wwLayoutItem>
-                </template>
-            </wwLayout>
+    <div class="dropdown" ref="dropdownElement" :style="cssVariables" ww-responsive="dropdown" @click.stop>
+        <div class="dropdown-default" v-show="!isMenuDisplayed">
+            <div class="dropdown-hover-trigger" @click="showDropdown" @mouseenter="showDropdown">
+                <wwLayout class="dropdown__layout" path="dropdown">
+                    <template v-slot="{ item }">
+                        <wwLayoutItem>
+                            <wwObject v-bind="item" :states="states"></wwObject>
+                        </wwLayoutItem>
+                    </template>
+                </wwLayout>
+            </div>
 
-            <div class="dropdown__content">
+            <div class="dropdown__content" :class="{ under: content.position === 'under' }" @mouseleave="hideDropdown">
                 <transition name="fade" mode="out-in">
-                    <wwLayout
-                        class="layout"
-                        ref="dropdownContent"
-                        path="dropdownContent"
+                    <div
+                        class="dropdown__content-container"
                         v-show="isVisible || isContentEdit"
+                        @mouseleave="hideDropdown"
                     >
-                        <template v-slot="{ item }">
-                            <wwLayoutItem>
-                                <wwObject v-bind="item" :states="states"></wwObject>
-                            </wwLayoutItem>
-                        </template>
-                    </wwLayout>
+                        <wwLayout class="layout" ref="dropdownContent" path="dropdownContent">
+                            <template v-slot="{ item }">
+                                <wwLayoutItem>
+                                    <wwObject v-bind="item" :states="states"></wwObject>
+                                </wwLayoutItem>
+                            </template>
+                        </wwLayout>
+                    </div>
                 </transition>
             </div>
         </div>
-        <div class="dropdown-mobile" @click="toggleView" v-else>
+        <div class="dropdown-mobile" @click="toggleView" v-show="isMenuDisplayed">
             <wwLayout class="dropdown__layout--mobile" path="dropdown">
                 <template v-slot="{ item }">
                     <wwLayoutItem>
@@ -45,7 +48,7 @@
                     >
                         <template v-slot="{ item }">
                             <wwLayoutItem>
-                                <wwObject v-bind="item"></wwObject>
+                                <wwObject v-bind="item" :states="states"></wwObject>
                             </wwLayoutItem>
                         </template>
                     </wwLayout>
@@ -72,6 +75,8 @@ export default {
         dropdownContent: [],
         menuBreakpoint: 'mobile',
         contentWidth: '80vw',
+        position: 'under',
+        trigger: 'mouseenter',
     },
     data() {
         return {
@@ -84,6 +89,9 @@ export default {
         };
     },
     watch: {
+        content() {
+            this.updatePosition();
+        },
         isEditing() {
             if (!this.isEditing) this.isContentEdit = false;
             this.updatePosition();
@@ -105,13 +113,16 @@ export default {
         },
         cssVariables() {
             return {
-                '--content-width': this.content.contentWidth,
+                // '--content-width': this.content.contentWidth,
                 '--top-position': this.topPosition + 'px',
             };
         },
     },
     methods: {
-        showDropdown() {
+        showDropdown(event) {
+            if (this.content.trigger !== event.type) return;
+
+            wwLib.$emit('ww-hover-dropdown:opened');
             this.updatePosition();
             this.isVisible = true;
             this.states = ['active'];
@@ -128,13 +139,20 @@ export default {
             this.isContentEdit = !this.isContentEdit;
         },
         updatePosition() {
-            if (!this.dropdown && !this.dropdown.getBoundingClientRect && !this.dropdown.offsetHeight) return;
             this.topPosition = this.dropdown.getBoundingClientRect().top + this.dropdown.offsetHeight;
         },
     },
     mounted() {
         this.dropdown = this.$refs.dropdownElement;
         this.updatePosition();
+    },
+    created() {
+        wwLib.$on('ww-hover-dropdown:opened', () => {
+            this.isVisible = false;
+        });
+    },
+    beforeDestroy() {
+        wwLib.$off('ww-hover-dropdown:opened');
     },
 };
 </script>
@@ -145,6 +163,7 @@ export default {
     --top-position: 0px;
 
     &__layout {
+        z-index: 10;
         display: flex;
         flex-direction: column;
         min-height: 20px;
@@ -152,22 +171,35 @@ export default {
     }
 
     &__content {
-        z-index: 9;
+        height: 200px;
         position: fixed;
         top: var(--top-position);
         left: 50%;
         transform: translateX(-50%);
-        width: var(--content-width);
-        margin-left: var(--content-width) / 10;
+        width: 100vw;
         margin-top: -1px;
         display: flex;
         flex-direction: row;
         justify-content: center;
         align-content: center;
 
-        &.isEditing {
-            border: 1px solid red;
+        .layout {
+            min-height: 20px;
+            min-width: 100px;
+            position: absolute;
+            transform: translateX(-50%);
         }
+    }
+
+    &__content.under {
+        width: fit-content;
+        position: absolute;
+        top: var(--top-position);
+        z-index: 9;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-content: center;
 
         .layout {
             display: flex;
