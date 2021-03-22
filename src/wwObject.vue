@@ -113,8 +113,8 @@ export default {
         },
         cssVariables() {
             return {
-                // '--content-width': this.content.contentWidth,
                 '--top-position': this.topPosition + 'px',
+                '--content-dimension': this.isVisible ? '200px' : '0px',
             };
         },
     },
@@ -171,7 +171,7 @@ export default {
     }
 
     &__content {
-        height: 200px;
+        height: var(--content-dimension);
         position: fixed;
         top: var(--top-position);
         left: 50%;
@@ -192,7 +192,8 @@ export default {
     }
 
     &__content.under {
-        width: fit-content;
+        height: var(--content-dimension);
+        width: 100vw;
         position: absolute;
         top: var(--top-position);
         z-index: 9;
