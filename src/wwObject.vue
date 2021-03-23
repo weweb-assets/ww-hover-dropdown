@@ -180,7 +180,6 @@ export default {
         flex-direction: column;
         min-height: 20px;
         min-width: 100px;
-        border: 2px solid pink;
     }
 
     &__content {
