@@ -1,5 +1,12 @@
 <template>
-    <div class="dropdown" ref="dropdownElement" :style="cssVariables" ww-responsive="dropdown" @click.stop>
+    <div
+        class="dropdown"
+        ref="dropdownElement"
+        :style="cssVariables"
+        ww-responsive="dropdown"
+        @click.stop
+        @mouseleave="hideDropdown"
+    >
         <div class="dropdown-default" v-show="!isMenuDisplayed">
             <div class="dropdown-hover-trigger" @click="showDropdown" @mouseenter="showDropdown">
                 <wwLayout class="dropdown__layout" path="dropdown">
@@ -13,19 +20,19 @@
 
             <div class="dropdown__content" :class="{ under: content.position === 'under' }" @mouseleave="hideDropdown">
                 <transition name="fade" mode="out-in">
-                    <div
-                        class="dropdown__content-container"
+                    <wwLayout
+                        class="layout"
+                        ref="dropdownContent"
+                        path="dropdownContent"
                         v-show="isVisible || isContentEdit"
-                        @mouseleave="hideDropdown"
+                        @mouseleave.native="hideDropdown"
                     >
-                        <wwLayout class="layout" ref="dropdownContent" path="dropdownContent">
-                            <template v-slot="{ item }">
-                                <wwLayoutItem>
-                                    <wwObject v-bind="item" :states="states"></wwObject>
-                                </wwLayoutItem>
-                            </template>
-                        </wwLayout>
-                    </div>
+                        <template v-slot="{ item }">
+                            <wwLayoutItem>
+                                <wwObject v-bind="item" :states="states"></wwObject>
+                            </wwLayoutItem>
+                        </template>
+                    </wwLayout>
                 </transition>
             </div>
         </div>
@@ -81,7 +88,7 @@ export default {
     data() {
         return {
             dropdown: null,
-            isVisible: false,
+            isVisible: true,
             isMobileVisible: false,
             isContentEdit: false,
             topPosition: 0,
@@ -93,7 +100,10 @@ export default {
             this.updatePosition();
         },
         isEditing() {
-            if (!this.isEditing) this.isContentEdit = false;
+            if (!this.isEditing) {
+                this.isVisible = false;
+                this.isContentEdit = false;
+            }
             this.updatePosition();
         },
     },
@@ -114,12 +124,14 @@ export default {
         cssVariables() {
             return {
                 '--top-position': this.topPosition + 'px',
-                '--content-dimension': this.isVisible ? '200px' : '0px',
+                '--display': this.isVisible || this.isContentEdit ? 'flex' : 'none',
+                '--content-dimension': this.isVisible ? '300px' : '0px',
             };
         },
     },
     methods: {
         showDropdown(event) {
+            if (this.isEditing && !this.isContentEdit) return;
             if (this.content.trigger !== event.type) return;
 
             wwLib.$emit('ww-hover-dropdown:opened');
@@ -139,7 +151,7 @@ export default {
             this.isContentEdit = !this.isContentEdit;
         },
         updatePosition() {
-            this.topPosition = this.dropdown.getBoundingClientRect().top + this.dropdown.offsetHeight;
+            this.topPosition = this.dropdown.getBoundingClientRect().top;
         },
     },
     mounted() {
@@ -161,16 +173,18 @@ export default {
 .dropdown {
     --content-width: 80vw;
     --top-position: 0px;
+    position: relative;
 
     &__layout {
-        z-index: 10;
         display: flex;
         flex-direction: column;
         min-height: 20px;
         min-width: 100px;
+        border: 2px solid pink;
     }
 
     &__content {
+        z-index: 9999;
         height: var(--content-dimension);
         position: fixed;
         top: var(--top-position);
@@ -178,7 +192,7 @@ export default {
         transform: translateX(-50%);
         width: 100vw;
         margin-top: -1px;
-        display: flex;
+        display: var(--display);
         flex-direction: row;
         justify-content: center;
         align-content: center;
@@ -186,21 +200,15 @@ export default {
         .layout {
             min-height: 20px;
             min-width: 100px;
-            position: absolute;
-            transform: translateX(-50%);
         }
     }
 
     &__content.under {
+        z-index: 9999;
         height: var(--content-dimension);
-        width: 100vw;
         position: absolute;
-        top: var(--top-position);
-        z-index: 9;
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        align-content: center;
+        top: 100%;
+        display: var(--display);
 
         .layout {
             display: flex;
