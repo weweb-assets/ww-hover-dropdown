@@ -88,7 +88,7 @@ export default {
     data() {
         return {
             dropdown: null,
-            isVisible: true,
+            isVisible: false,
             isMobileVisible: false,
             isContentEdit: false,
             topPosition: 0,
