@@ -1,12 +1,5 @@
 <template>
-    <div
-        class="dropdown"
-        ref="dropdownElement"
-        :style="cssVariables"
-        ww-responsive="dropdown"
-        @click.stop
-        @mouseleave="hideDropdown"
-    >
+    <div class="dropdown" ref="dropdownElement" :style="cssVariables" ww-responsive="dropdown" @click.stop>
         <div class="dropdown-default" v-show="!isMenuDisplayed">
             <div class="dropdown-hover-trigger" @click="showDropdown" @mouseenter="showDropdown">
                 <wwLayout class="dropdown__layout" path="dropdown">
