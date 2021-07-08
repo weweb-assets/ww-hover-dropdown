@@ -1,7 +1,6 @@
 <script>
 /** Functional component to animate height for vertical opening transition */
 export default {
-    name: 'wwExpandTransition',
     functional: true,
     render(createElement, context) {
         const data = {

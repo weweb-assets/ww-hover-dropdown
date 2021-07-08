@@ -1,11 +1,11 @@
 <template>
-    <div class="dropdown" ref="dropdownElement" :style="cssVariables" ww-responsive="dropdown" @click.stop>
-        <div class="dropdown-default" v-show="!isMenuDisplayed">
+    <div ref="dropdownElement" class="dropdown" :style="cssVariables" ww-responsive="dropdown" @click.stop>
+        <div v-show="!isMenuDisplayed" class="dropdown-default">
             <div class="dropdown-hover-trigger" @click="showDropdown" @mouseenter="showDropdown">
                 <wwLayout class="dropdown__layout" path="dropdown">
-                    <template v-slot="{ item }">
+                    <template #default="{ item }">
                         <wwLayoutItem>
-                            <wwObject v-bind="item" :states="states"></wwObject>
+                            <wwElement v-bind="item" :states="states"></wwElement>
                         </wwLayoutItem>
                     </template>
                 </wwLayout>
@@ -14,26 +14,26 @@
             <div class="dropdown__content" :class="{ under: content.position === 'under' }" @mouseleave="hideDropdown">
                 <transition name="fade" mode="out-in">
                     <wwLayout
-                        class="layout"
-                        ref="dropdownContent"
-                        path="dropdownContent"
                         v-show="isVisible || isContentEdit"
-                        @mouseleave.native="hideDropdown"
+                        ref="dropdownContent"
+                        class="layout"
+                        path="dropdownContent"
+                        @mouseleave="hideDropdown"
                     >
-                        <template v-slot="{ item }">
+                        <template #default="{ item }">
                             <wwLayoutItem>
-                                <wwObject v-bind="item" :states="states"></wwObject>
+                                <wwElement v-bind="item" :states="states"></wwElement>
                             </wwLayoutItem>
                         </template>
                     </wwLayout>
                 </transition>
             </div>
         </div>
-        <div class="dropdown-mobile" @click="toggleView" v-show="isMenuDisplayed">
+        <div v-show="isMenuDisplayed" class="dropdown-mobile" @click="toggleView">
             <wwLayout class="dropdown__layout--mobile" path="dropdown">
-                <template v-slot="{ item }">
+                <template #default="{ item }">
                     <wwLayoutItem>
-                        <wwObject v-bind="item" :states="states"></wwObject>
+                        <wwElement v-bind="item" :states="states"></wwElement>
                     </wwLayoutItem>
                 </template>
             </wwLayout>
@@ -41,14 +41,14 @@
             <div class="dropdown__content--mobile">
                 <wwExpandTransition>
                     <wwLayout
-                        class="layout"
-                        ref="dropdownContent"
-                        path="dropdownContent"
                         v-show="isMobileVisible || isContentEdit"
+                        ref="dropdownContent"
+                        class="layout"
+                        path="dropdownContent"
                     >
-                        <template v-slot="{ item }">
+                        <template #default="{ item }">
                             <wwLayoutItem>
-                                <wwObject v-bind="item" :states="states"></wwObject>
+                                <wwElement v-bind="item" :states="states"></wwElement>
                             </wwLayoutItem>
                         </template>
                     </wwLayout>
@@ -64,10 +64,10 @@ import wwExpandTransition from './wwExpandTransition.vue';
 export default {
     components: { wwExpandTransition },
     props: {
-        content: Object,
-        wwFrontState: Object,
+        content: { type: Object, required: true },
+        wwFrontState: { type: Object, required: true },
         /* wwEditor:start */
-        wwEditorState: Object,
+        wwEditorState: { type: Object, required: true },
         /* wwEditor:end */
     },
     wwDefaultContent: {
@@ -87,18 +87,6 @@ export default {
             topPosition: 0,
             states: [],
         };
-    },
-    watch: {
-        content() {
-            this.updatePosition();
-        },
-        isEditing() {
-            if (!this.isEditing) {
-                this.isVisible = false;
-                this.isContentEdit = false;
-            }
-            this.updatePosition();
-        },
     },
     computed: {
         isEditing() {
@@ -122,11 +110,35 @@ export default {
             };
         },
     },
+    watch: {
+        content() {
+            this.updatePosition();
+        },
+        isEditing() {
+            if (!this.isEditing) {
+                this.isVisible = false;
+                this.isContentEdit = false;
+            }
+            this.updatePosition();
+        },
+    },
+    mounted() {
+        this.dropdown = this.$refs.dropdownElement;
+        this.updatePosition();
+    },
+    created() {
+        wwLib.$on('ww-hover-dropdown:opened', () => {
+            this.isVisible = false;
+        });
+    },
+    beforeUnmount() {
+        wwLib.$off('ww-hover-dropdown:opened');
+    },
     methods: {
         showDropdown(event) {
             if (this.isEditing && !this.isContentEdit) return;
             if (this.content.trigger !== event.type) return;
-
+            // eslint-disable-next-line vue/custom-event-name-casing
             wwLib.$emit('ww-hover-dropdown:opened');
             this.updatePosition();
             this.isVisible = true;
@@ -147,18 +159,6 @@ export default {
             this.topPosition = this.dropdown.getBoundingClientRect().top;
         },
     },
-    mounted() {
-        this.dropdown = this.$refs.dropdownElement;
-        this.updatePosition();
-    },
-    created() {
-        wwLib.$on('ww-hover-dropdown:opened', () => {
-            this.isVisible = false;
-        });
-    },
-    beforeDestroy() {
-        wwLib.$off('ww-hover-dropdown:opened');
-    },
 };
 </script>
 
@@ -167,14 +167,12 @@ export default {
     --content-width: 80vw;
     --top-position: 0px;
     position: relative;
-
     &__layout {
         display: flex;
         flex-direction: column;
         min-height: 20px;
         min-width: 100px;
     }
-
     &__content {
         z-index: 9999;
         height: var(--content-dimension);
@@ -194,14 +192,12 @@ export default {
             min-width: 100px;
         }
     }
-
     &__content.under {
         z-index: 9999;
         height: var(--content-dimension);
         position: absolute;
         top: 100%;
         display: var(--display);
-
         .layout {
             display: flex;
             flex-direction: column;
@@ -209,10 +205,8 @@ export default {
             min-width: 100px;
         }
     }
-
     .dropdown-mobile {
         width: 100%;
-
         &__content {
             z-index: 9;
             position: fixed;
@@ -225,7 +219,6 @@ export default {
             flex-direction: row;
             justify-content: center;
             align-content: center;
-
             .layout {
                 display: flex;
                 flex-direction: column;
@@ -235,7 +228,6 @@ export default {
         }
     }
 }
-
 // FADE
 .fade-enter-active,
 .fade-leave-active {
