@@ -1,6 +1,6 @@
 # WW-HOVER-DROPDOWN
 
-This is a simple component to start developing within weweb editor
+This is an element for [weweb.io](https://www.weweb.io/).
 
 ## Installation
 
