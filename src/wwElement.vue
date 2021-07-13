@@ -10,7 +10,6 @@
                     </template>
                 </wwLayout>
             </div>
-
             <div class="dropdown__content" :class="{ under: content.position === 'under' }" @mouseleave="hideDropdown">
                 <transition name="fade" mode="out-in">
                     <wwLayout
