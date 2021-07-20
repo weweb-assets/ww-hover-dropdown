@@ -1,7 +1,12 @@
 <template>
     <div ref="dropdownElement" class="dropdown" :style="cssVariables" ww-responsive="dropdown" @click.stop>
         <div v-show="!isMenuDisplayed" class="dropdown-default">
-            <div class="dropdown-hover-trigger" @click="showDropdown" @mouseenter="showDropdown">
+            <div
+                class="dropdown-hover-trigger"
+                @click="showDropdown"
+                @mouseenter="showDropdown"
+                @mouseleave="hideDropdown"
+            >
                 <wwLayout class="dropdown__layout" path="dropdown">
                     <template #default="{ item }">
                         <wwLayoutItem>
@@ -10,15 +15,15 @@
                     </template>
                 </wwLayout>
             </div>
-            <div class="dropdown__content" :class="{ under: content.position === 'under' }" @mouseleave="hideDropdown">
+            <div
+                v-show="isVisible || isContentEdit"
+                class="dropdown__content"
+                :class="{ under: content.position === 'under' }"
+                @mouseenter="showDropdown"
+                @mouseleave="hideDropdown"
+            >
                 <transition name="fade" mode="out-in">
-                    <wwLayout
-                        v-show="isVisible || isContentEdit"
-                        ref="dropdownContent"
-                        class="layout"
-                        path="dropdownContent"
-                        @mouseleave="hideDropdown"
-                    >
+                    <wwLayout ref="dropdownContent" class="layout" path="dropdownContent">
                         <template #default="{ item }">
                             <wwLayoutItem>
                                 <wwElement v-bind="item" :states="states"></wwElement>
@@ -166,6 +171,7 @@ export default {
     --content-width: 80vw;
     --top-position: 0px;
     position: relative;
+
     &__layout {
         display: flex;
         flex-direction: column;
@@ -174,12 +180,10 @@ export default {
     }
     &__content {
         z-index: 9999;
-        height: var(--content-dimension);
         position: fixed;
         top: var(--top-position);
         left: 50%;
         transform: translateX(-50%);
-        width: 100vw;
         margin-top: -1px;
         display: var(--display);
         flex-direction: row;
@@ -193,7 +197,6 @@ export default {
     }
     &__content.under {
         z-index: 9999;
-        height: var(--content-dimension);
         position: absolute;
         top: 100%;
         display: var(--display);
