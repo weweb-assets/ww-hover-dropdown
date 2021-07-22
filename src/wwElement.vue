@@ -16,7 +16,7 @@
                 </wwLayout>
             </div>
             <div
-                v-show="isVisible || isContentEdit"
+                v-if="isVisible || isContentEdit"
                 class="dropdown__content"
                 :class="{ under: content.position === 'under' }"
                 @mouseenter="showDropdown"
@@ -45,7 +45,7 @@
             <div class="dropdown__content--mobile">
                 <wwExpandTransition>
                     <wwLayout
-                        v-show="isMobileVisible || isContentEdit"
+                        v-if="isMobileVisible || isContentEdit"
                         ref="dropdownContent"
                         class="layout"
                         path="dropdownContent"
