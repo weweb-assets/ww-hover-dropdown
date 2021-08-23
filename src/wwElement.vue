@@ -176,7 +176,7 @@ export default {
     &__layout {
         display: flex;
         flex-direction: column;
-        min-height: 20px;
+        // min-height: 20px;
         // min-width: 100px;
     }
     &__content {
