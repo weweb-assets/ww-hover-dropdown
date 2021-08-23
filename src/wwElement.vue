@@ -19,6 +19,7 @@
                 v-show="isVisible || isContentEdit"
                 class="dropdown__content"
                 :class="{ under: content.position === 'under' }"
+                @click="hideDropdown"
                 @mouseenter="showDropdown"
                 @mouseleave="hideDropdown"
             >
@@ -176,7 +177,7 @@ export default {
         display: flex;
         flex-direction: column;
         min-height: 20px;
-        min-width: 100px;
+        // min-width: 100px;
     }
     &__content {
         z-index: 9999;
