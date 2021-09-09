@@ -78,7 +78,7 @@ export default {
         dropdownContent: [],
         menuBreakpoint: 'mobile',
         trigger: 'mouseenter',
-        appearAnimation: 'slideY',
+        appearAnimation: 'fade',
         animationDuration: '300ms',
         animationTimingFunction: 'ease',
         slideOrigin: '20px',
