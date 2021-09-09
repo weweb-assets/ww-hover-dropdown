@@ -7,7 +7,6 @@
             @mouseenter="showDropdown"
             @mouseleave="hideDropdown"
         >
-            <div class="">Feature</div>
             <div class="dropdown-hover-trigger">
                 <wwLayout class="dropdown__layout" path="dropdown">
                     <template #default="{ item }">
@@ -61,6 +60,10 @@
 <script>
 import wwExpandTransition from './wwExpandTransition.vue';
 
+/* wwEditor:start */
+import { getSettingsConfigurations } from './configuration';
+/* wwEditor:end */
+
 export default {
     components: { wwExpandTransition },
     props: {
@@ -75,10 +78,17 @@ export default {
         dropdownContent: [],
         menuBreakpoint: 'mobile',
         trigger: 'mouseenter',
-        appearAnimation: 'fade',
+        appearAnimation: 'slideY',
         animationDuration: '300ms',
         animationTimingFunction: 'ease',
+        slideOrigin: '20px',
+        rotationAngle: '-35deg',
     },
+    /* wwEditor:start */
+    wwEditorConfiguration({ content }) {
+        return getSettingsConfigurations(content);
+    },
+    /* wwEditor:end */
     data() {
         return {
             dropdown: null,
@@ -108,7 +118,7 @@ export default {
             const perspectiveValue = () => {
                 let perspective = 'none';
 
-                if (this.content.appearAnimation === 'rotateX') {
+                if (this.content.appearAnimation === 'rotate') {
                     perspective = '2000px';
                 }
 
@@ -121,6 +131,8 @@ export default {
                 '--animation-duration': this.content.animationDuration,
                 '--perspective': perspectiveValue(),
                 '--animationTimingFunction': this.content.animationTimingFunction,
+                '--slideOrigin': this.content.slideOrigin,
+                '--rotationAngle': this.content.rotationAngle,
             };
         },
     },
@@ -193,17 +205,10 @@ export default {
     --animation-duration: 300ms;
     --top-position: 0px;
     --perspective: 2000px;
+    --slideOrigin: -20px;
+    --rotationAngle: -35deg;
 }
-.testAnim {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    width: 200px;
-    height: 200px;
-    transform: translateX(-50%);
-    background-color: grey;
-    margin-top: 24px;
-}
+
 .dropdown {
     position: relative;
     z-index: 10000 !important;
@@ -280,7 +285,7 @@ export default {
 /* FADE */
 .fade-enter-active,
 .fade-leave-active {
-    transition: all var(--animation-duration) ease;
+    transition: all var(--animation-duration) var(--animationTimingFunction);
 }
 
 .fade-enter-from,
@@ -288,62 +293,66 @@ export default {
     opacity: 0;
 }
 
-/* SLIDE DOWN */
-.slideDown-enter-active,
-.slideDown-leave-active {
-    transition: all var(--animation-duration) ease;
+/* SLIDE Y */
+.slideY-enter-active,
+.slideY-leave-active {
+    transition: all var(--animation-duration) var(--animationTimingFunction);
 }
 
-.slideDown-enter-from {
-    transform: translateX(-50%) translateY(-20px);
-}
-.slideDown-leave-to {
+.slideY-enter-from {
     opacity: 0;
-    transform: translateX(-50%) translateY(-20px);
+    transform: translateX(-50%) translateY(var(--slideOrigin));
 }
-
-/* SLIDE UP */
-.slideUp-enter-active,
-.slideUp-leave-active {
-    transition: all var(--animation-duration) ease;
-}
-
-.slideUp-enter-from {
-    transform: translateX(-50%) translateY(20px);
-}
-.slideUp-leave-to {
+.slideY-leave-to {
     opacity: 0;
-    transform: translateX(-50%) translateY(0px);
+    transform: translateX(-50%) translateY(var(--slideOrigin));
+}
+
+/* SLIDE X */
+.slideX-enter-active,
+.slideX-leave-active {
+    transition: all var(--animation-duration) var(--animationTimingFunction);
+}
+
+.slideX-enter-from {
+    opacity: 0;
+    transform: translateX(calc(-50% + var(--slideOrigin)));
+}
+.slideX-leave-to {
+    opacity: 0;
+    transform: translateX(calc(-50% + var(--slideOrigin)));
 }
 
 //  SCALE DOWN
-.scaleDown-enter-active,
-.scaleDown-leave-active {
-    transition: all var(--animation-duration) ease-in-out;
+.scale-enter-active,
+.scale-leave-active {
+    transition: all var(--animation-duration) var(--animationTimingFunction);
     animation-fill-mode: forwards;
     transform-origin: top center;
 }
 
-.scaleDown-enter-from {
+.scale-enter-from {
+    opacity: 0;
     transform: translateX(-50%) scale(0);
 }
-.scaleDown-leave-to {
+.scale-leave-to {
     opacity: 0;
     transform: translateX(-50%) scale(0);
 }
 
 //  ROTATE X
-.rotateX-enter-active,
-.rotateX-leave-active {
-    transition: all var(--animation-duration) ease-in-out;
+.rotate-enter-active,
+.rotate-leave-active {
+    transition: all var(--animation-duration) var(--animationTimingFunction);
     transform-origin: center -20px;
 }
 
-.rotateX-enter-from {
-    transform: translateX(-50%) rotateX(-35deg);
-}
-.rotateX-leave-to {
+.rotate-enter-from {
     opacity: 0;
-    transform: translateX(-50%) rotateX(-35deg);
+    transform: translateX(-50%) rotateX(var(--rotationAngle));
+}
+.rotate-leave-to {
+    opacity: 0;
+    transform: translateX(-50%) rotateX(var(--rotationAngle));
 }
 </style>
