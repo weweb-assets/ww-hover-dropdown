@@ -184,30 +184,29 @@ export default {
 
             this.updatePosition();
             this.isVisible = true;
-            this.states = ['active'];
         },
         hideDropdown() {
             this.isMouseIn = false;
             if (this.content.trigger === 'click') return;
 
             this.isVisible = false;
-            this.states = [];
         },
         handleMouseClick() {
-            this.updatePosition();
-            this.isVisible = !this.isVisible;
             if (this.isVisible) {
-                // eslint-disable-next-line vue/custom-event-name-casing
-                wwLib.$emit('ww-hover-dropdown:opened');
+                this.isVisible = false;
+                return;
             }
-            this.states = this.isVisible ? ['active'] : [];
+
+            // eslint-disable-next-line vue/custom-event-name-casing
+            wwLib.$emit('ww-hover-dropdown:opened');
+            this.isVisible = true;
+            this.updatePosition();
         },
         clickListener() {
             if (this.isMouseIn) return;
             else this.isVisible = false;
         },
         toggleView() {
-            this.states = this.states[0] === 'active' ? [] : ['active'];
             this.isMobileVisible = !this.isMobileVisible;
         },
         toggleEdit() {
