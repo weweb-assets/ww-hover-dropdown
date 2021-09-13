@@ -3,7 +3,7 @@
         <div
             v-show="!isMenuDisplayed"
             class="dropdown-default"
-            @click="showDropdown"
+            @click="handleMouseClick"
             @mouseenter="showDropdown"
             @mouseleave="hideDropdown"
         >
@@ -77,7 +77,7 @@ export default {
         dropdown: [],
         dropdownContent: [],
         menuBreakpoint: 'mobile',
-        trigger: 'mouseenter',
+        trigger: 'click',
         appearAnimation: 'fade',
         animationDuration: '300ms',
         animationTimingFunction: 'ease',
@@ -93,11 +93,11 @@ export default {
         return {
             dropdown: null,
             isVisible: false,
-            stayvisible: false,
             isMobileVisible: false,
             isContentEdit: false,
             topPosition: 0,
             states: [],
+            isMouseIn: false,
         };
     },
     computed: {
@@ -140,6 +140,13 @@ export default {
         content() {
             this.updatePosition();
         },
+        'content.trigger'() {
+            if (this.content.trigger === 'click') {
+                wwLib.getFrontDocument().addEventListener('click', this.clickListener);
+            } else {
+                wwLib.getFrontDocument().removeEventListener('click', this.clickListener);
+            }
+        },
         isEditing() {
             if (!this.isEditing) {
                 this.isVisible = false;
@@ -151,6 +158,10 @@ export default {
     mounted() {
         this.dropdown = this.$refs.dropdownElement;
         this.updatePosition();
+
+        if (this.content.trigger === 'click') {
+            wwLib.getFrontDocument().addEventListener('click', this.clickListener);
+        }
     },
     created() {
         wwLib.$on('ww-hover-dropdown:opened', () => {
@@ -159,32 +170,37 @@ export default {
     },
     beforeUnmount() {
         wwLib.$off('ww-hover-dropdown:opened');
+        if (this.content.trigger === 'click') {
+            wwLib.getFrontDocument().removeEventListener('click', this.clickListener);
+        }
     },
     methods: {
         showDropdown(event) {
+            this.isMouseIn = true;
+
             if (this.isEditing && !this.isContentEdit) return;
             if (this.content.trigger !== event.type) return;
             // eslint-disable-next-line vue/custom-event-name-casing
             wwLib.$emit('ww-hover-dropdown:opened');
             this.updatePosition();
-            this.$nextTick(() => {
-                this.isVisible = true;
-                this.handleVisibility();
-                this.states = ['active'];
-            });
+            this.isVisible = true;
+            this.states = ['active'];
         },
         hideDropdown() {
-            this.$nextTick(() => {
-                this.isVisible = false;
-                setTimeout(() => {
-                    this.handleVisibility();
-                }, 500);
-                this.states = [];
-            });
+            this.isMouseIn = false;
+            if (this.content.trigger === 'click') return;
+
+            this.isVisible = false;
+            this.states = [];
         },
-        handleVisibility() {
-            if (!this.isVisible) this.stayvisible = false;
-            else this.stayvisible = true;
+        handleMouseClick() {
+            this.updatePosition();
+            this.isVisible = !this.isVisible;
+            this.states = this.isVisible ? ['active'] : [];
+        },
+        clickListener() {
+            if (this.isMouseIn) return;
+            else this.isVisible = false;
         },
         toggleView() {
             this.states = this.states[0] === 'active' ? [] : ['active'];
