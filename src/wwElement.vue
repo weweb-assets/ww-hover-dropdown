@@ -196,6 +196,10 @@ export default {
         handleMouseClick() {
             this.updatePosition();
             this.isVisible = !this.isVisible;
+            if (this.isVisible) {
+                // eslint-disable-next-line vue/custom-event-name-casing
+                wwLib.$emit('ww-hover-dropdown:opened');
+            }
             this.states = this.isVisible ? ['active'] : [];
         },
         clickListener() {
