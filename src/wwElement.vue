@@ -166,6 +166,7 @@ export default {
     created() {
         wwLib.$on('ww-hover-dropdown:opened', () => {
             this.isVisible = false;
+            this.states = [];
         });
     },
     beforeUnmount() {
