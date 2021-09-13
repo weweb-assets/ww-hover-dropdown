@@ -181,8 +181,7 @@ export default {
 
             if (this.isEditing && !this.isContentEdit) return;
             if (this.content.trigger !== event.type) return;
-            // eslint-disable-next-line vue/custom-event-name-casing
-            wwLib.$emit('ww-hover-dropdown:opened');
+
             this.updatePosition();
             this.isVisible = true;
             this.states = ['active'];
