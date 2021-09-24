@@ -1,10 +1,19 @@
-const options = content => {
-    return {
+export default {
+    options: {
+        autoByContent: true,
+    },
+    editor: {
+        label: {
+            en: 'Hover dropdown',
+        },
+    },
+    properties: {
         trigger: {
             label: {
                 en: 'Show on',
                 fr: 'Show on',
             },
+            section: 'settings',
             type: 'TextSelect',
             options: {
                 options: [
@@ -12,12 +21,14 @@ const options = content => {
                     { value: 'click', label: { en: 'Click' } },
                 ],
             },
+            defaultValue: 'click',
         },
         appearAnimation: {
             label: {
                 en: 'Appear animation',
                 fr: "Animation d'apparition",
             },
+            section: 'settings',
             type: 'TextSelect',
             options: {
                 options: [
@@ -28,48 +39,56 @@ const options = content => {
                     { value: 'rotate', label: { en: 'Rotate', fr: 'Rotate' } },
                 ],
             },
+            defaultValue: 'fade',
         },
-        slideOrigin:
-            content.appearAnimation === 'slideX' || content.appearAnimation === 'slideY'
-                ? {
-                      type: 'Length',
-                      label: {
-                          en: 'Slide origin',
-                          fr: 'Slide origin',
-                      },
-                      options: {
-                          unitChoices: [{ value: 'px', label: 'px', min: -300, max: 300 }],
-                      },
-                  }
-                : {},
-        rotationAngle:
-            content.appearAnimation === 'rotate'
-                ? {
-                      type: 'Length',
-                      label: {
-                          en: 'Rotation angle',
-                          fr: 'Rotation angle',
-                      },
-                      options: {
-                          unitChoices: [{ value: 'deg', label: 'deg', min: -180, max: 180 }],
-                      },
-                  }
-                : {},
+        slideOrigin: {
+            type: 'Length',
+            label: {
+                en: 'Slide origin',
+                fr: 'Slide origin',
+            },
+            section: 'settings',
+            hidden: content => {
+                return content.appearAnimation === 'slideX' || content.appearAnimation === 'slideY';
+            },
+            options: {
+                unitChoices: [{ value: 'px', label: 'px', min: -300, max: 300 }],
+            },
+            defaultValue: '20px',
+        },
+        rotationAngle: {
+            type: 'Length',
+            label: {
+                en: 'Rotation angle',
+                fr: 'Rotation angle',
+            },
+            section: 'settings',
+            hidden: content => {
+                return content.appearAnimation === 'rotate';
+            },
+            options: {
+                unitChoices: [{ value: 'deg', label: 'deg', min: -180, max: 180 }],
+            },
+            defaultValue: '-35deg',
+        },
         animationDuration: {
             type: 'Length',
             label: {
                 en: 'Animation duration',
                 fr: "Durée de l'animation",
             },
+            section: 'settings',
             options: {
                 unitChoices: [{ value: 'ms', label: 'ms', min: 1, max: 5000 }],
             },
+            defaultValue: '300ms',
         },
         animationTimingFunction: {
             label: {
                 en: 'Animation timing function',
                 fr: 'Animation timing function',
             },
+            section: 'settings',
             type: 'TextSelect',
             options: {
                 options: [
@@ -80,10 +99,12 @@ const options = content => {
                     { value: 'linear', label: { en: 'linear', fr: 'linear' } },
                 ],
             },
+            defaultValue: 'ease',
         },
         menuBreakpoint: {
             label: { en: 'Mobile view starting at' },
             type: 'TextRadioGroup',
+            section: 'settings',
             options: {
                 choices: [
                     { value: 'laptop', title: { en: 'Laptop' }, icon: 'laptop' },
@@ -91,18 +112,25 @@ const options = content => {
                     { value: 'mobile', title: { en: 'Mobile' }, icon: 'mobile' },
                 ],
             },
+            defaultValue: 'mobile',
         },
         toggleEdit: {
             type: 'Button',
+            section: 'settings',
             options: {
                 text: { en: 'Toggle edition', fr: 'Toggle edition' },
                 color: 'blue',
                 action: 'toggleEdit',
             },
+            editorOnly: true,
         },
-    };
-};
-
-export const getSettingsConfigurations = content => {
-    return { settingsOptions: { ...options(content) } };
+        dropdown: {
+            hidden: true,
+            defaultValue: [],
+        },
+        dropdownContent: {
+            hidden: true,
+            defaultValue: [],
+        },
+    },
 };

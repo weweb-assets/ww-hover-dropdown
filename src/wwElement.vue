@@ -60,10 +60,6 @@
 <script>
 import wwExpandTransition from './wwExpandTransition.vue';
 
-/* wwEditor:start */
-import { getSettingsConfigurations } from './configuration';
-/* wwEditor:end */
-
 export default {
     components: { wwExpandTransition },
     props: {
@@ -73,22 +69,6 @@ export default {
         wwEditorState: { type: Object, required: true },
         /* wwEditor:end */
     },
-    wwDefaultContent: {
-        dropdown: [],
-        dropdownContent: [],
-        menuBreakpoint: 'mobile',
-        trigger: 'click',
-        appearAnimation: 'fade',
-        animationDuration: '300ms',
-        animationTimingFunction: 'ease',
-        slideOrigin: '20px',
-        rotationAngle: '-35deg',
-    },
-    /* wwEditor:start */
-    wwEditorConfiguration({ content }) {
-        return getSettingsConfigurations(content);
-    },
-    /* wwEditor:end */
     data() {
         return {
             dropdown: null,
