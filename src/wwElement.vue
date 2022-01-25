@@ -17,7 +17,12 @@
                 </wwLayout>
             </div>
             <transition :name="content.appearAnimation" mode="out-in">
-                <div v-if="isVisible || isContentEdit" class="dropdown__content under">
+                <div 
+                    v-if="isVisible || isContentEdit"
+                    class="dropdown__content under" 
+                    @mouseenter="isMouseInContent = true"
+                    @mouseleave="isMouseInContent = false"
+                >
                     <wwLayout ref="dropdownContent" class="layout" path="dropdownContent">
                         <template #default="{ item }">
                             <wwLayoutItem>
@@ -78,6 +83,7 @@ export default {
             topPosition: 0,
             states: [],
             isMouseIn: false,
+            isMouseInContent: false
         };
     },
     computed: {
@@ -166,6 +172,8 @@ export default {
             this.isVisible = true;
         },
         hideDropdown() {
+            if (this.content.closeOnClick === 'outside' && this.isMouseInContent) return
+
             this.isMouseIn = false;
             if (this.content.trigger === 'click') return;
 
@@ -173,6 +181,8 @@ export default {
         },
         handleMouseClick() {
             if (this.isVisible) {
+                if (this.content.closeOnClick === 'outside' && this.isMouseInContent) return
+
                 this.isVisible = false;
                 return;
             }
