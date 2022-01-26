@@ -3,9 +3,9 @@
         <div
             v-show="!isMenuDisplayed"
             class="dropdown-default"
-            @click="handleMouseClick"
-            @mouseenter="showDropdown"
-            @mouseleave="hideDropdown"
+            @click="handleClickInside"
+            @mouseenter="isMouseIn = true"
+            @mouseleave="isMouseIn = false"
         >
             <div class="dropdown-hover-trigger">
                 <wwLayout class="dropdown__layout" path="dropdown">
@@ -20,8 +20,6 @@
                 <div 
                     v-if="isVisible || isContentEdit"
                     class="dropdown__content under" 
-                    @mouseenter="isMouseInContent = true"
-                    @mouseleave="isMouseInContent = false"
                 >
                     <wwLayout ref="dropdownContent" class="layout" path="dropdownContent">
                         <template #default="{ item }">
@@ -82,8 +80,7 @@ export default {
             isContentEdit: false,
             topPosition: 0,
             states: [],
-            isMouseIn: false,
-            isMouseInContent: false
+            isMouseIn: false
         };
     },
     computed: {
@@ -126,11 +123,14 @@ export default {
         content() {
             this.updatePosition();
         },
-        'content.trigger'() {
-            if (this.content.trigger === 'click') {
-                wwLib.getFrontDocument().addEventListener('click', this.clickListener);
-            } else {
-                wwLib.getFrontDocument().removeEventListener('click', this.clickListener);
+        'content.trigger': {
+            immediate: true,
+            handler: function (value) {
+                if (value === 'click') {
+                    wwLib.getFrontDocument().addEventListener('click', this.handleClickOutside);
+                } else {
+                    wwLib.getFrontDocument().removeEventListener('click', this.handleClickOutside);
+                }
             }
         },
         isEditing() {
@@ -140,61 +140,47 @@ export default {
             }
             this.updatePosition();
         },
+        isVisible(value) {
+            // eslint-disable-next-line vue/custom-event-name-casing
+            if (value) {
+                wwLib.$emit('ww-hover-dropdown:opened', this.id);
+                this.updatePosition();
+            }
+        },
+        isMouseIn(value) {
+            if (this.content.trigger === 'mouseenter') {
+                this.isVisible = value
+            }
+        }
+    },
+    setup() {
+        const id = wwLib.wwUtils.getUid()
+        return { id }
     },
     mounted() {
         this.dropdown = this.$refs.dropdownElement;
-        this.updatePosition();
 
-        if (this.content.trigger === 'click') {
-            wwLib.getFrontDocument().addEventListener('click', this.clickListener);
-        }
-    },
-    created() {
-        wwLib.$on('ww-hover-dropdown:opened', () => {
-            this.isVisible = false;
-            this.states = [];
+        wwLib.$on('ww-hover-dropdown:opened', (dropdownId) => {
+            if (dropdownId !== this.id) {
+                this.isVisible = false;
+                this.states = [];
+            }
         });
     },
     beforeUnmount() {
         wwLib.$off('ww-hover-dropdown:opened');
         if (this.content.trigger === 'click') {
-            wwLib.getFrontDocument().removeEventListener('click', this.clickListener);
+            wwLib.getFrontDocument().removeEventListener('click', this.handleClickOutside);
         }
     },
     methods: {
-        showDropdown(event) {
-            this.isMouseIn = true;
-
-            if (this.isEditing && !this.isContentEdit) return;
-            if (this.content.trigger !== event.type) return;
-
-            this.updatePosition();
-            this.isVisible = true;
+        handleClickInside() {
+            if (this.isVisible && this.content.closeOnClick === 'outside') return;
+            this.isVisible = !this.isVisible;
         },
-        hideDropdown() {
-            if (this.content.closeOnClick === 'outside' && this.isMouseInContent) return
-
-            this.isMouseIn = false;
-            if (this.content.trigger === 'click') return;
-
-            this.isVisible = false;
-        },
-        handleMouseClick() {
-            if (this.isVisible) {
-                if (this.content.closeOnClick === 'outside' && this.isMouseInContent) return
-
-                this.isVisible = false;
-                return;
-            }
-
-            // eslint-disable-next-line vue/custom-event-name-casing
-            wwLib.$emit('ww-hover-dropdown:opened');
-            this.isVisible = true;
-            this.updatePosition();
-        },
-        clickListener() {
+        handleClickOutside() {
             if (this.isMouseIn) return;
-            else this.isVisible = false;
+            this.isVisible = false;
         },
         toggleView() {
             this.isMobileVisible = !this.isMobileVisible;
