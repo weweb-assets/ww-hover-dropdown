@@ -4,8 +4,8 @@
             v-show="!isMenuDisplayed"
             class="dropdown-default"
             @click="handleClickInside"
-            @mouseenter="isMouseIn = true"
-            @mouseleave="isMouseIn = false"
+            @mouseenter="handleMouseHover(true)"
+            @mouseleave="handleMouseHover(false)"
         >
             <div class="dropdown-hover-trigger">
                 <wwLayout class="dropdown__layout" path="dropdown">
@@ -149,13 +149,13 @@ export default {
         },
         isMouseIn(value) {
             if (this.content.trigger === 'mouseenter') {
-                this.isVisible = value
+                this.isVisible = value;
             }
         }
     },
     setup() {
-        const id = wwLib.wwUtils.getUid()
-        return { id }
+        const id = wwLib.wwUtils.getUid();
+        return { id };
     },
     mounted() {
         this.dropdown = this.$refs.dropdownElement;
@@ -181,6 +181,12 @@ export default {
         handleClickOutside() {
             if (this.isMouseIn) return;
             this.isVisible = false;
+        },
+        handleMouseHover(value) {
+            this.isMouseIn = value;
+            if (this.content.trigger === 'mouseenter') {
+                this.isVisible = value;
+            }
         },
         toggleView() {
             this.isMobileVisible = !this.isMobileVisible;
