@@ -38,7 +38,7 @@
                 </div>
             </transition>
         </div>
-        <div v-if="isMenuDisplayed" class="dropdown-mobile" @click="handleClickInside">
+        <div v-if="isMenuDisplayed" class="dropdown-mobile" @click="handleMobileClick">
             <wwLayout class="dropdown__layout--mobile" path="dropdown">
                 <template #default="{ item }">
                     <wwLayoutItem>
@@ -175,7 +175,9 @@ export default {
     methods: {
         handleClickInside() {
             if (this.isVisible && this.isMouseInContent && this.content.closeOnClick === 'outside') return;
-            this.isVisible = !this.isVisible;
+            if (this.content.trigger === 'click') {
+                this.isVisible = !this.isVisible;
+            }
         },
         handleClickOutside() {
             if (this.isMouseIn) return;
@@ -186,6 +188,10 @@ export default {
             if (this.content.trigger === 'mouseenter') {
                 this.isVisible = value;
             }
+        },
+        handleMobileClick() {
+            if (this.isVisible && this.isMouseInContent && this.content.closeOnClick === 'outside') return;
+            this.isVisible = !this.isVisible
         },
         /* wwEditor:start */
         toggleEdit() {
