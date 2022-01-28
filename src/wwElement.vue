@@ -120,17 +120,15 @@ export default {
         },
     },
     watch: {
+        /* wwEditor:start */
         content() {
             this.updatePosition();
         },
-        'content.trigger': {
-            immediate: true,
-            handler: function (value) {
-                if (value === 'click') {
-                    wwLib.getFrontDocument().addEventListener('click', this.handleClickOutside);
-                } else {
-                    wwLib.getFrontDocument().removeEventListener('click', this.handleClickOutside);
-                }
+        'content.trigger'(value) {
+            if (value === 'click') {
+                wwLib.getFrontDocument().addEventListener('click', this.handleClickOutside);
+            } else {
+                wwLib.getFrontDocument().removeEventListener('click', this.handleClickOutside);
             }
         },
         isEditing() {
@@ -140,6 +138,7 @@ export default {
             }
             this.updatePosition();
         },
+        /* wwEditor:end */
         isVisible(value) {
             // eslint-disable-next-line vue/custom-event-name-casing
             if (value) {
@@ -159,7 +158,7 @@ export default {
     },
     mounted() {
         this.dropdown = this.$refs.dropdownElement;
-
+        wwLib.getFrontDocument().addEventListener('click', this.handleClickOutside);
         wwLib.$on('ww-hover-dropdown:opened', (dropdownId) => {
             if (dropdownId !== this.id) {
                 this.isVisible = false;
@@ -191,9 +190,11 @@ export default {
         toggleView() {
             this.isMobileVisible = !this.isMobileVisible;
         },
+        /* wwEditor:start */
         toggleEdit() {
             this.isContentEdit = !this.isContentEdit;
         },
+        /* wwEditor:end */
         updatePosition() {
             this.topPosition = this.dropdown.getBoundingClientRect().top;
         },
