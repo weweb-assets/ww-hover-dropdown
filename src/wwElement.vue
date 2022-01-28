@@ -20,8 +20,15 @@
                 <div 
                     v-if="isVisible || isContentEdit"
                     class="dropdown__content under" 
+                    
                 >
-                    <wwLayout ref="dropdownContent" class="layout" path="dropdownContent">
+                    <wwLayout 
+                        ref="dropdownContent" 
+                        class="layout" 
+                        path="dropdownContent" 
+                        @mouseenter="isMouseInContent = true"
+                        @mouseleave="isMouseInContent = false"
+                    >
                         <template #default="{ item }">
                             <wwLayoutItem>
                                 <wwElement v-bind="item" :states="states"></wwElement>
@@ -31,7 +38,7 @@
                 </div>
             </transition>
         </div>
-        <div v-if="isMenuDisplayed" class="dropdown-mobile" @click="toggleView">
+        <div v-if="isMenuDisplayed" class="dropdown-mobile" @click="handleClickInside">
             <wwLayout class="dropdown__layout--mobile" path="dropdown">
                 <template #default="{ item }">
                     <wwLayoutItem>
@@ -43,10 +50,12 @@
             <div class="dropdown__content--mobile">
                 <wwExpandTransition>
                     <wwLayout
-                        v-if="isMobileVisible || isContentEdit"
+                        v-if="isVisible || isContentEdit"
                         ref="dropdownContent"
                         class="layout"
                         path="dropdownContent"
+                        @mouseenter="isMouseInContent = true"
+                        @mouseleave="isMouseInContent = false"
                     >
                         <template #default="{ item }">
                             <wwLayoutItem>
@@ -74,13 +83,12 @@ export default {
     },
     data() {
         return {
-            dropdown: null,
             isVisible: false,
-            isMobileVisible: false,
             isContentEdit: false,
             topPosition: 0,
             states: [],
-            isMouseIn: false
+            isMouseIn: false,
+            isMouseInContent: false
         };
     },
     computed: {
@@ -124,13 +132,6 @@ export default {
         content() {
             this.updatePosition();
         },
-        'content.trigger'(value) {
-            if (value === 'click') {
-                wwLib.getFrontDocument().addEventListener('click', this.handleClickOutside);
-            } else {
-                wwLib.getFrontDocument().removeEventListener('click', this.handleClickOutside);
-            }
-        },
         isEditing() {
             if (!this.isEditing) {
                 this.isVisible = false;
@@ -156,8 +157,7 @@ export default {
         const id = wwLib.wwUtils.getUid();
         return { id };
     },
-    mounted() {
-        this.dropdown = this.$refs.dropdownElement;
+    beforeMount() {
         wwLib.getFrontDocument().addEventListener('click', this.handleClickOutside);
         wwLib.$on('ww-hover-dropdown:opened', (dropdownId) => {
             if (dropdownId !== this.id) {
@@ -166,7 +166,7 @@ export default {
             }
         });
     },
-    beforeUnmount() {
+    unmounted() {
         wwLib.$off('ww-hover-dropdown:opened');
         if (this.content.trigger === 'click') {
             wwLib.getFrontDocument().removeEventListener('click', this.handleClickOutside);
@@ -174,7 +174,7 @@ export default {
     },
     methods: {
         handleClickInside() {
-            if (this.isVisible && this.content.closeOnClick === 'outside') return;
+            if (this.isVisible && this.isMouseInContent && this.content.closeOnClick === 'outside') return;
             this.isVisible = !this.isVisible;
         },
         handleClickOutside() {
@@ -187,16 +187,13 @@ export default {
                 this.isVisible = value;
             }
         },
-        toggleView() {
-            this.isMobileVisible = !this.isMobileVisible;
-        },
         /* wwEditor:start */
         toggleEdit() {
             this.isContentEdit = !this.isContentEdit;
         },
         /* wwEditor:end */
         updatePosition() {
-            this.topPosition = this.dropdown.getBoundingClientRect().top;
+            this.topPosition = this.$refs.dropdownElement.getBoundingClientRect().top;
         },
     },
 };
