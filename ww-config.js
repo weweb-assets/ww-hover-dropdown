@@ -23,6 +23,21 @@ export default {
             },
             defaultValue: 'click',
         },
+        closeOnClick: {
+            label: {
+                en: 'Close on click',
+                fr: 'Fermeture au click',
+            },
+            section: 'settings',
+            type: 'TextSelect',
+            options: {
+                options: [
+                    { value: 'always', label: { en: 'Always', fr: 'Toujours' } },
+                    { value: 'outside', label: { en: 'Outside only', fr: 'En dehors uniquement' } },
+                ],
+            },
+            defaultValue: 'always',
+        },
         appearAnimation: {
             label: {
                 en: 'Appear animation',
