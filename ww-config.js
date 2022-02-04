@@ -6,6 +6,9 @@ export default {
         label: {
             en: 'Hover dropdown',
         },
+        bubble: {
+            icon: 'fontawesome/solid/caret-square-down',
+        },
     },
     properties: {
         trigger: {
