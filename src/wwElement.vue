@@ -129,8 +129,11 @@ export default {
     },
     watch: {
         /* wwEditor:start */
-        content() {
-            this.updatePosition();
+        content: {
+            deep: true,
+            handler: function () {
+                this.updatePosition();
+            }
         },
         isEditing() {
             if (!this.isEditing) {
@@ -165,6 +168,9 @@ export default {
                 this.states = [];
             }
         });
+    },
+    mounted() {
+        this.updatePosition()
     },
     unmounted() {
         wwLib.$off('ww-hover-dropdown:opened');
@@ -216,7 +222,6 @@ export default {
 
 .dropdown {
     position: relative;
-    z-index: 10000 !important;
 
     .dropdown-default {
         perspective: var(--perspective);
@@ -228,10 +233,9 @@ export default {
         flex-direction: row;
         justify-content: center;
         align-items: center;
-        z-index: 10000;
     }
     &__content {
-        z-index: 9999;
+        z-index: 100;
         position: fixed;
         top: var(--top-position);
         left: 50%;
@@ -252,7 +256,6 @@ export default {
         }
     }
     &__content.under {
-        z-index: 9999;
         position: absolute;
         top: 100%;
 

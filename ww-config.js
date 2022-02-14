@@ -68,7 +68,7 @@ export default {
             },
             section: 'settings',
             hidden: content => {
-                return content.appearAnimation === 'slideX' || content.appearAnimation === 'slideY';
+                return !['slideX', 'slideY'].includes(content.appearAnimation);
             },
             options: {
                 unitChoices: [{ value: 'px', label: 'px', min: -300, max: 300 }],
@@ -83,7 +83,7 @@ export default {
             },
             section: 'settings',
             hidden: content => {
-                return content.appearAnimation === 'rotate';
+                return content.appearAnimation !== 'rotate';
             },
             options: {
                 unitChoices: [{ value: 'deg', label: 'deg', min: -180, max: 180 }],
