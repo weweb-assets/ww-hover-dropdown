@@ -10,9 +10,6 @@
         "build": "weweb build",
         "serve": "weweb serve"
     },
-    "dependencies": {
-        "animate.css": "^4.1.1"
-    },
     "devDependencies": {
         "@weweb/cli": "latest"
     }

@@ -17,15 +17,11 @@
                 </wwLayout>
             </div>
             <transition :name="content.appearAnimation" mode="out-in">
-                <div 
-                    v-if="isVisible || isContentEdit"
-                    class="dropdown__content under" 
-                    
-                >
-                    <wwLayout 
-                        ref="dropdownContent" 
-                        class="layout" 
-                        path="dropdownContent" 
+                <div v-if="isVisible" class="dropdown__content under">
+                    <wwLayout
+                        ref="dropdownContent"
+                        class="layout"
+                        path="dropdownContent"
                         @mouseenter="isMouseInContent = true"
                         @mouseleave="isMouseInContent = false"
                     >
@@ -50,7 +46,7 @@
             <div class="dropdown__content--mobile">
                 <wwExpandTransition>
                     <wwLayout
-                        v-if="isVisible || isContentEdit"
+                        v-if="isVisible"
                         ref="dropdownContent"
                         class="layout"
                         path="dropdownContent"
@@ -74,6 +70,7 @@ import wwExpandTransition from './wwExpandTransition.vue';
 
 export default {
     components: { wwExpandTransition },
+    emits: ['update:content:effect'],
     props: {
         content: { type: Object, required: true },
         wwFrontState: { type: Object, required: true },
@@ -84,11 +81,10 @@ export default {
     data() {
         return {
             isVisible: false,
-            isContentEdit: false,
             topPosition: 0,
             states: [],
             isMouseIn: false,
-            isMouseInContent: false
+            isMouseInContent: false,
         };
     },
     computed: {
@@ -100,6 +96,7 @@ export default {
             return false;
         },
         isMenuDisplayed() {
+            if (!this.content.isMenuBreakpoint) return false;
             if (this.content.menuBreakpoint === 'laptop') return true;
             if (this.content.menuBreakpoint === 'tablet')
                 return this.wwFrontState.screenSize === 'mobile' || this.wwFrontState.screenSize === 'tablet';
@@ -116,6 +113,20 @@ export default {
                 return perspective;
             };
 
+            let leftValue = '50%';
+            let transformValue = 'translateX(-50%)';
+
+            if (this.content.alignement === 'align-left') {
+                leftValue = '0px';
+                transformValue = 'translateX(0%)';
+            } else if (this.content.alignement === 'center') {
+                leftValue = '50%';
+                transformValue = 'translateX(-50%)';
+            } else if (this.content.alignement === 'align-right') {
+                leftValue = '100%';
+                transformValue = 'translateX(-100%)';
+            }
+
             return {
                 '--top-position': this.topPosition + 'px',
                 '--content-dimension': this.isVisible ? '300px' : '0px',
@@ -124,6 +135,8 @@ export default {
                 '--animationTimingFunction': this.content.animationTimingFunction,
                 '--slideOrigin': this.content.slideOrigin,
                 '--rotationAngle': this.content.rotationAngle,
+                '--left-value': leftValue,
+                '--transform-value': transformValue,
             };
         },
     },
@@ -133,12 +146,11 @@ export default {
             deep: true,
             handler: function () {
                 this.updatePosition();
-            }
+            },
         },
         isEditing() {
             if (!this.isEditing) {
                 this.isVisible = false;
-                this.isContentEdit = false;
             }
             this.updatePosition();
         },
@@ -147,14 +159,21 @@ export default {
             // eslint-disable-next-line vue/custom-event-name-casing
             if (value) {
                 wwLib.$emit('ww-hover-dropdown:opened', this.id);
+                this.$emit('update:content:effect', { internalDisplay: value });
                 this.updatePosition();
             }
+        },
+        'content.internalDisplay'(value) {
+            this.isVisible = value;
+        },
+        'content.alignement'(value) {
+            console.log(value);
         },
         isMouseIn(value) {
             if (this.content.trigger === 'mouseenter') {
                 this.isVisible = value;
             }
-        }
+        },
     },
     setup() {
         const id = wwLib.wwUtils.getUid();
@@ -162,7 +181,7 @@ export default {
     },
     beforeMount() {
         wwLib.getFrontDocument().addEventListener('click', this.handleClickOutside);
-        wwLib.$on('ww-hover-dropdown:opened', (dropdownId) => {
+        wwLib.$on('ww-hover-dropdown:opened', dropdownId => {
             if (dropdownId !== this.id) {
                 this.isVisible = false;
                 this.states = [];
@@ -170,7 +189,8 @@ export default {
         });
     },
     mounted() {
-        this.updatePosition()
+        this.isVisible = this.content.internalDisplay;
+        this.updatePosition();
     },
     unmounted() {
         wwLib.$off('ww-hover-dropdown:opened');
@@ -197,13 +217,8 @@ export default {
         },
         handleMobileClick() {
             if (this.isVisible && this.isMouseInContent && this.content.closeOnClick === 'outside') return;
-            this.isVisible = !this.isVisible
+            this.isVisible = !this.isVisible;
         },
-        /* wwEditor:start */
-        toggleEdit() {
-            this.isContentEdit = !this.isContentEdit;
-        },
-        /* wwEditor:end */
         updatePosition() {
             this.topPosition = this.$refs.dropdownElement.getBoundingClientRect().top;
         },
@@ -238,8 +253,8 @@ export default {
         z-index: 100;
         position: fixed;
         top: var(--top-position);
-        left: 50%;
-        transform: translateX(-50%);
+        left: var(--left-value);
+        transform: var(--transform-value);
         margin-top: -1px;
         flex-direction: row;
         justify-content: center;
