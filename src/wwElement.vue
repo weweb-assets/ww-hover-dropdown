@@ -70,7 +70,6 @@ import wwExpandTransition from './wwExpandTransition.vue';
 
 export default {
     components: { wwExpandTransition },
-    emits: ['update:content:effect'],
     props: {
         content: { type: Object, required: true },
         wwFrontState: { type: Object, required: true },
@@ -159,15 +158,11 @@ export default {
             // eslint-disable-next-line vue/custom-event-name-casing
             if (value) {
                 wwLib.$emit('ww-hover-dropdown:opened', this.id);
-                this.$emit('update:content:effect', { internalDisplay: value });
                 this.updatePosition();
             }
         },
         'content.internalDisplay'(value) {
             this.isVisible = value;
-        },
-        'content.alignement'(value) {
-            console.log(value);
         },
         isMouseIn(value) {
             if (this.content.trigger === 'mouseenter') {
