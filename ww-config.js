@@ -20,9 +20,9 @@ export default {
     },
     properties: {
         internalDisplay: {
-            label: { en: 'Display' },
+            label: { en: 'Init display' },
             type: 'OnOff',
-            defaultValue: false,
+            defaultValue: true,
             bindable: true,
         },
         trigger: {
@@ -159,10 +159,16 @@ export default {
         dropdown: {
             hidden: true,
             defaultValue: [],
+            navigator: {
+                group: 'Trigger',
+            },
         },
         dropdownContent: {
             hidden: true,
             defaultValue: [],
+            navigator: {
+                group: 'Content',
+            },
         },
     },
 };
