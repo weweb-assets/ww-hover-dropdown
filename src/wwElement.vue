@@ -17,15 +17,11 @@
                 </wwLayout>
             </div>
             <transition :name="content.appearAnimation" mode="out-in">
-                <div 
-                    v-if="isVisible || isContentEdit"
-                    class="dropdown__content under" 
-                    
-                >
-                    <wwLayout 
-                        ref="dropdownContent" 
-                        class="layout" 
-                        path="dropdownContent" 
+                <div v-show="isVisible || isContentEdit" class="dropdown__content under">
+                    <wwLayout
+                        ref="dropdownContent"
+                        class="layout"
+                        path="dropdownContent"
                         @mouseenter="isMouseInContent = true"
                         @mouseleave="isMouseInContent = false"
                     >
@@ -88,7 +84,7 @@ export default {
             topPosition: 0,
             states: [],
             isMouseIn: false,
-            isMouseInContent: false
+            isMouseInContent: false,
         };
     },
     computed: {
@@ -133,7 +129,7 @@ export default {
             deep: true,
             handler: function () {
                 this.updatePosition();
-            }
+            },
         },
         isEditing() {
             if (!this.isEditing) {
@@ -154,7 +150,7 @@ export default {
             if (this.content.trigger === 'mouseenter') {
                 this.isVisible = value;
             }
-        }
+        },
     },
     setup() {
         const id = wwLib.wwUtils.getUid();
@@ -162,7 +158,7 @@ export default {
     },
     beforeMount() {
         wwLib.getFrontDocument().addEventListener('click', this.handleClickOutside);
-        wwLib.$on('ww-hover-dropdown:opened', (dropdownId) => {
+        wwLib.$on('ww-hover-dropdown:opened', dropdownId => {
             if (dropdownId !== this.id) {
                 this.isVisible = false;
                 this.states = [];
@@ -170,7 +166,7 @@ export default {
         });
     },
     mounted() {
-        this.updatePosition()
+        this.updatePosition();
     },
     unmounted() {
         wwLib.$off('ww-hover-dropdown:opened');
@@ -197,7 +193,7 @@ export default {
         },
         handleMobileClick() {
             if (this.isVisible && this.isMouseInContent && this.content.closeOnClick === 'outside') return;
-            this.isVisible = !this.isVisible
+            this.isVisible = !this.isVisible;
         },
         /* wwEditor:start */
         toggleEdit() {
