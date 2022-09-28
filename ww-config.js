@@ -24,6 +24,12 @@ export default {
             type: 'OnOff',
             defaultValue: true,
             bindable: true,
+            /* wwEditor:start */
+            bindingValidation: {
+                type: 'boolean',
+                tooltip: 'A boolean that defines the initial display value: `true | false`',
+            },
+            /* wwEditor:end */
         },
         trigger: {
             label: {
