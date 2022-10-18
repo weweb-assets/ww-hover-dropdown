@@ -3,6 +3,7 @@
         <div
             v-show="!isMenuDisplayed"
             class="dropdown-default"
+            ww-responsive="dropdown-desktop"
             @click="handleClickInside"
             @mouseenter="handleMouseHover(true)"
             @mouseleave="handleMouseHover(false)"
@@ -17,7 +18,7 @@
                 </wwLayout>
             </div>
             <transition :name="content.appearAnimation" mode="out-in">
-                <div v-if="isVisible" class="dropdown__content under">
+                <div v-show="isVisible" ww-responsive="dropdown-content-desktop" class="dropdown__content under">
                     <wwLayout
                         ref="dropdownContent"
                         class="layout"
@@ -34,7 +35,12 @@
                 </div>
             </transition>
         </div>
-        <div v-if="isMenuDisplayed" class="dropdown-mobile" @click="handleMobileClick">
+        <div
+            v-show="isMenuDisplayed"
+            class="dropdown-mobile"
+            ww-responsive="dropdown-mobile"
+            @click="handleMobileClick"
+        >
             <wwLayout class="dropdown__layout--mobile" path="dropdown">
                 <template #default="{ item }">
                     <wwLayoutItem>
@@ -46,7 +52,8 @@
             <div class="dropdown__content--mobile">
                 <wwExpandTransition>
                     <wwLayout
-                        v-if="isVisible"
+                        v-show="isVisible"
+                        ww-responsive="dropdown-content-mobile"
                         ref="dropdownContent"
                         class="layout"
                         path="dropdownContent"
