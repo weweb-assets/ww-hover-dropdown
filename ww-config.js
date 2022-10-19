@@ -10,14 +10,32 @@ export default {
         bubble: {
             icon: 'fontawesome/solid/caret-square-down',
         },
+        customStylePropertiesOrder: [
+            'internalDisplay',
+            ['trigger', 'closeOnClick'],
+            ['appearAnimation', 'slideOrigin', 'rotationAngle', 'animationDuration', 'animationTimingFunction'],
+            ['alignement'],
+            ['isMenuBreakpoint', 'menuBreakpoint'],
+        ],
     },
     properties: {
+        internalDisplay: {
+            label: { en: 'Init display' },
+            type: 'OnOff',
+            defaultValue: true,
+            bindable: true,
+            /* wwEditor:start */
+            bindingValidation: {
+                type: 'boolean',
+                tooltip: 'A boolean that defines the initial display value: `true | false`',
+            },
+            /* wwEditor:end */
+        },
         trigger: {
             label: {
                 en: 'Show on',
                 fr: 'Show on',
             },
-            section: 'settings',
             type: 'TextSelect',
             options: {
                 options: [
@@ -32,7 +50,6 @@ export default {
                 en: 'Close on click',
                 fr: 'Fermeture au click',
             },
-            section: 'settings',
             type: 'TextSelect',
             options: {
                 options: [
@@ -47,7 +64,6 @@ export default {
                 en: 'Appear animation',
                 fr: "Animation d'apparition",
             },
-            section: 'settings',
             type: 'TextSelect',
             options: {
                 options: [
@@ -66,7 +82,6 @@ export default {
                 en: 'Slide origin',
                 fr: 'Slide origin',
             },
-            section: 'settings',
             hidden: content => {
                 return !['slideX', 'slideY'].includes(content.appearAnimation);
             },
@@ -81,7 +96,6 @@ export default {
                 en: 'Rotation angle',
                 fr: 'Rotation angle',
             },
-            section: 'settings',
             hidden: content => {
                 return content.appearAnimation !== 'rotate';
             },
@@ -96,7 +110,6 @@ export default {
                 en: 'Animation duration',
                 fr: "Durée de l'animation",
             },
-            section: 'settings',
             options: {
                 unitChoices: [{ value: 'ms', label: 'ms', min: 1, max: 5000 }],
             },
@@ -107,7 +120,6 @@ export default {
                 en: 'Animation timing function',
                 fr: 'Animation timing function',
             },
-            section: 'settings',
             type: 'TextSelect',
             options: {
                 options: [
@@ -120,10 +132,27 @@ export default {
             },
             defaultValue: 'ease',
         },
+        alignement: {
+            label: { en: 'Alignement' },
+            type: 'TextRadioGroup',
+            options: {
+                choices: [
+                    { value: 'align-left', title: { en: 'Left', fr: 'Gauche' }, icon: 'align-left' },
+                    { value: 'center', title: { en: 'Center', fr: 'Milieu' }, icon: 'align-center' },
+                    { value: 'align-right', title: { en: 'Right', fr: 'Droite' }, icon: 'align-right' },
+                ],
+            },
+            defaultValue: 'center',
+        },
+        isMenuBreakpoint: {
+            label: { en: 'Mobile view' },
+            type: 'OnOff',
+            defaultValue: true,
+        },
         menuBreakpoint: {
+            hidden: content => !content.isMenuBreakpoint,
             label: { en: 'Mobile view starting at' },
             type: 'TextRadioGroup',
-            section: 'settings',
             options: {
                 choices: [
                     { value: 'laptop', title: { en: 'Laptop' }, icon: 'laptop' },
@@ -133,23 +162,19 @@ export default {
             },
             defaultValue: 'mobile',
         },
-        toggleEdit: {
-            type: 'Button',
-            section: 'settings',
-            options: {
-                text: { en: 'Toggle edition', fr: 'Toggle edition' },
-                color: 'blue',
-                action: 'toggleEdit',
-            },
-            editorOnly: true,
-        },
         dropdown: {
             hidden: true,
             defaultValue: [],
+            navigator: {
+                group: 'Trigger',
+            },
         },
         dropdownContent: {
             hidden: true,
             defaultValue: [],
+            navigator: {
+                group: 'Content',
+            },
         },
     },
 };
