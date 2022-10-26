@@ -6,9 +6,9 @@ export default {
         label: {
             en: 'Hover dropdown',
         },
-        icon: 'fontawesome/solid/caret-square-down',
+        icon: 'chevron-down',
         bubble: {
-            icon: 'fontawesome/solid/caret-square-down',
+            icon: 'chevron-down',
         },
         customStylePropertiesOrder: [
             'internalDisplay',
