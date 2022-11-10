@@ -170,7 +170,7 @@ export default {
             // eslint-disable-next-line vue/custom-event-name-casing
             if (value) {
                 wwLib.$emit('ww-hover-dropdown:opened', this.id);
-                this.$emit('update:content:effect', { internalDisplay: value });
+                // this.$emit('update:content:effect', { internalDisplay: value });
                 this.updatePosition();
             }
         },
