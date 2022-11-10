@@ -1,7 +1,7 @@
 <template>
     <div ref="dropdownElement" class="dropdown" :style="cssVariables" ww-responsive="dropdown" @click.stop>
         <div
-            v-show="!isMenuDisplayed"
+            :style="{ display: !isMenuDisplayed ? 'block' : 'none' }"
             class="dropdown-default"
             ww-responsive="dropdown-desktop"
             @click="handleClickInside"
@@ -18,7 +18,11 @@
                 </wwLayout>
             </div>
             <transition :name="content.appearAnimation" mode="out-in">
-                <div v-show="isVisible" ww-responsive="dropdown-content-desktop" class="dropdown__content under">
+                <div
+                    :style="{ display: isVisible ? 'block' : 'none' }"
+                    ww-responsive="dropdown-content-desktop"
+                    class="dropdown__content under"
+                >
                     <wwLayout
                         ref="dropdownContent"
                         class="layout"
@@ -36,7 +40,7 @@
             </transition>
         </div>
         <div
-            v-show="isMenuDisplayed"
+            :style="{ display: isMenuDisplayed ? 'block' : 'none' }"
             class="dropdown-mobile"
             ww-responsive="dropdown-mobile"
             @click="handleMobileClick"
@@ -52,7 +56,7 @@
             <div class="dropdown__content--mobile">
                 <wwExpandTransition>
                     <wwLayout
-                        v-show="isVisible"
+                        :style="{ display: isVisible ? 'flex' : 'none' }"
                         ww-responsive="dropdown-content-mobile"
                         ref="dropdownContent"
                         class="layout"
