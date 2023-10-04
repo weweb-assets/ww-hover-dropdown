@@ -78,6 +78,7 @@
 
 <script>
 import wwExpandTransition from './wwExpandTransition.vue';
+import { provide, inject } from 'vue';
 
 export default {
     components: { wwExpandTransition },
@@ -169,7 +170,7 @@ export default {
         isVisible(value) {
             // eslint-disable-next-line vue/custom-event-name-casing
             if (value) {
-                wwLib.$emit('ww-hover-dropdown:opened', this.id);
+                if (!this.isInsideDropdown) wwLib.$emit('ww-hover-dropdown:opened', this.id);
                 // this.$emit('update:content:effect', { internalDisplay: value });
                 this.updatePosition();
             }
@@ -188,7 +189,9 @@ export default {
     },
     setup() {
         const id = wwLib.wwUtils.getUid();
-        return { id };
+        const isInsideDropdown = inject('ww-hover-dropdown', false);
+        provide('ww-hover-dropdown', id);
+        return { id, isInsideDropdown };
     },
     beforeMount() {
         wwLib.getFrontDocument().addEventListener('click', this.handleClickOutside);
