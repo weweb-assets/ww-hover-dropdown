@@ -18,7 +18,7 @@
                 </wwLayout>
             </div>
             <transition :name="content.appearAnimation" mode="out-in">
-                <div v-if="isVisible" ww-responsive="dropdown-content-desktop" class="dropdown__content under">
+                <div v-show="isVisible" ww-responsive="dropdown-content-desktop" class="dropdown__content under">
                     <wwLayout
                         ref="dropdownContent"
                         class="layout"
@@ -52,7 +52,7 @@
             <div class="dropdown__content--mobile">
                 <wwExpandTransition>
                     <wwLayout
-                        v-if="isVisible"
+                        v-show="isVisible"
                         ww-responsive="dropdown-content-mobile"
                         ref="dropdownContent"
                         class="layout"
