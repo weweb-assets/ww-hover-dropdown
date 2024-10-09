@@ -58,7 +58,7 @@
                 <wwExpandTransition>
                     <wwLayout
                         v-show="isVisible"
-                        :style="{ display: isVisible ? 'block' : 'none' }"
+                        :style="{ display: isVisible ? 'flex' : 'none' }"
                         ww-responsive="dropdown-content-mobile"
                         ref="dropdownContent"
                         class="layout"
