@@ -18,7 +18,12 @@
                 </wwLayout>
             </div>
             <transition :name="content.appearAnimation" mode="out-in">
-                <div v-show="isVisible" ww-responsive="dropdown-content-desktop" class="dropdown__content under">
+                <div
+                    v-show="isVisible"
+                    :style="{ display: isVisible ? 'block' : 'none' }"
+                    ww-responsive="dropdown-content-desktop"
+                    class="dropdown__content under"
+                >
                     <wwLayout
                         ref="dropdownContent"
                         class="layout"
@@ -53,6 +58,7 @@
                 <wwExpandTransition>
                     <wwLayout
                         v-show="isVisible"
+                        :style="{ display: isVisible ? 'block' : 'none' }"
                         ww-responsive="dropdown-content-mobile"
                         ref="dropdownContent"
                         class="layout"
@@ -260,6 +266,7 @@ export default {
         align-items: center;
     }
     &__content {
+        display: block;
         z-index: 100;
         position: fixed;
         top: var(--top-position);
