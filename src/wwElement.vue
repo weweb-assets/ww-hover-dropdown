@@ -266,7 +266,6 @@ export default {
         align-items: center;
     }
     &__content {
-        display: block;
         z-index: 100;
         position: fixed;
         top: var(--top-position);
