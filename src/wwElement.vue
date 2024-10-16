@@ -19,6 +19,7 @@
             </div>
             <transition :name="content.appearAnimation" mode="out-in">
                 <div
+                    v-show="isVisible"
                     :style="{ display: isVisible ? 'block' : 'none' }"
                     ww-responsive="dropdown-content-desktop"
                     class="dropdown__content under"
@@ -56,6 +57,7 @@
             <div class="dropdown__content--mobile">
                 <wwExpandTransition>
                     <wwLayout
+                        v-show="isVisible"
                         :style="{ display: isVisible ? 'flex' : 'none' }"
                         ww-responsive="dropdown-content-mobile"
                         ref="dropdownContent"
