@@ -4,7 +4,7 @@
             :style="{ display: !isMenuDisplayed ? 'block' : 'none' }"
             class="dropdown-default"
             ww-responsive="dropdown-desktop"
-            @click="handleClickInside"
+            @click.capture="handleClickInside"
             @mouseenter="handleMouseHover(true)"
             @mouseleave="handleMouseHover(false)"
         >
