@@ -210,9 +210,7 @@ export default {
     },
     unmounted() {
         wwLib.$off('ww-hover-dropdown:opened');
-        if (this.content.trigger === 'click') {
-            wwLib.getFrontDocument().removeEventListener('click', this.handleClickOutside);
-        }
+        wwLib.getFrontDocument().removeEventListener('click', this.handleClickOutside);
     },
     methods: {
         handleClickInside() {
